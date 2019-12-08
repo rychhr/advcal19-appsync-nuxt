@@ -1,33 +1,73 @@
 <template>
   <div class="container">
     <div>
-      <logo />
-      <h1 class="title">
-        advcal19
-      </h1>
-      <h2 class="subtitle">
-        Welcome to the iView + Nuxt.js template
-      </h2>
-      <div class="links">
-        <Button type="primary" target="_blank" to="https://nuxtjs.org/">
-          Documentation
-        </Button>
-        <Button target="_blank" to="https://github.com/nuxt/nuxt.js">
-          GitHub
-        </Button>
-        <Button target="_blank" to="https://www.iviewui.com/">
-          iView
-        </Button>
-      </div>
+      <Form>
+        <FormItem>
+          <Input v-model="value" type="text" />
+        </FormItem>
+        <FormItem>
+          <Button @click="handleSubmit" type="primary">submit</Button>
+        </FormItem>
+        <FormItem>
+          <span>{{ message }}</span>
+        </FormItem>
+      </Form>
     </div>
   </div>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
+import API, { graphqlOperation } from '@aws-amplify/api'
+
+const createMessage = `mutation createMessage($message: String!) {
+  createMessage(input: { message: $message }) {
+    __typename
+    id
+    message
+    createdAt
+  }
+}
+`
+
+const onCreateMessage = `subscription onCreateMessage {
+  onCreateMessage {
+    __typename
+    message
+  }
+}`
+
 export default {
-  components: {
-    Logo
+  data() {
+    return {
+      message: '',
+      value: ''
+    }
+  },
+  created() {
+    this.subscribe()
+  },
+  methods: {
+    async handleSubmit(event) {
+      event.preventDefault()
+      event.stopPropagation()
+      const message = {
+        id: '',
+        message: this.value,
+        createdAt: ''
+      }
+      await API.graphql(graphqlOperation(createMessage, message))
+    },
+    subscribe() {
+      this.subscription = API.graphql(
+        graphqlOperation(onCreateMessage)
+      ).subscribe({
+        next: (event) => {
+          if (event) {
+            this.message = event.value.data.onCreateMessage.message
+          }
+        }
+      })
+    }
   }
 }
 </script>
