@@ -1,6 +1,6 @@
-# advcal19
+# Qiita Advent Calendar 2019 サンプルプロジェクト
 
-> My kickass Nuxt.js project
+[Pure WebSocketsをサポートしたAWS AppSyncでWebとiOS間のリアルタイムチャットを作ってみた](https://qiita.com/rychhr/items/afe7cc62a80861153098)
 
 ## Build Setup
 
@@ -18,5 +18,3 @@ $ npm run start
 # generate static project
 $ npm run generate
 ```
-
-For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
